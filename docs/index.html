@@ -744,7 +744,10 @@
       </div>
       <p class="abstract-text">
         Editorial and content marketing teams face severe bandwidth constraints when managing large publication
-        portfolios, making manual page audits across thousands of URLs infeasible. Using the FlyRank March 2026 research
+        portfolios, making manual page audits across thousands of URLs infeasible. This paper is a case study of that
+        problem inside FlyRank's multi-client SEO platform: a system serving 32 enterprise publishers needed a
+        principled way to direct finite monthly editorial capacity toward the pages at highest risk of organic traffic
+        loss — replacing an age-based rule that treated all content equally. Using the FlyRank March 2026 research
         snapshot comprising 30,000 anonymized page records across 32 clients, we formulate content decay prediction as
         an out-of-sample ranking problem. We train supervised classification models (Logistic Regression, Decision Tree,
         and Random Forest) alongside a transparent rule-based heuristic baseline, evaluating performance on a strictly
@@ -786,6 +789,14 @@
     <section id="problem" class="paper-section">
       <span class="section-num">SECTION 01</span>
       <h2 class="section-heading">Introduction &amp; Problem Statement</h2>
+      <p>
+        FlyRank's content platform serves 32 enterprise publishing clients whose combined portfolio spans tens of
+        thousands of indexed pages. When traffic analytics showed a significant fraction of those pages losing search
+        visibility quarter-over-quarter, the editorial question became urgent: <em>with a team that can realistically
+        review 50 pages per month, which ones deserve attention first?</em> The existing answer — flag everything older
+        than 180 days — consumed editor time on evergreen articles that needed no changes while genuinely decaying
+        high-value pages went untouched. This research builds and validates a machine learning alternative to that rule.
+      </p>
       <p>
         In modern digital publishing and search engine optimization (SEO), managing content decay is as critical as
         producing new articles. As search algorithms evolve and competitors publish fresher resources, established

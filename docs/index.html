@@ -1,14 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Prioritizing Content Refresh Under Bandwidth Constraints — FlyRank ML Research</title>
-  <meta name="description" content="A machine learning research paper on out-of-sample search opportunity and content decay scoring using 30,000 production records across 32 clients.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
+  <meta name="description"
+    content="A machine learning research paper on out-of-sample search opportunity and content decay scoring using 30,000 production records across 32 clients.">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+  <!-- MathJax Configuration & Script for LaTeX Math Rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <style>
     :root {
       --bg-dark: #090d16;
@@ -32,8 +51,16 @@
       --font-mono: 'Space Mono', monospace;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       background-color: var(--bg-dark);
       color: var(--text-main);
@@ -43,8 +70,16 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    a { color: var(--accent-primary); text-decoration: none; transition: color 0.15s ease; }
-    a:hover { color: #7dd3fc; text-decoration: underline; }
+    a {
+      color: var(--accent-primary);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    a:hover {
+      color: #7dd3fc;
+      text-decoration: underline;
+    }
 
     /* --- Navigation Bar --- */
     .navbar {
@@ -60,6 +95,7 @@
       align-items: center;
       gap: 16px;
     }
+
     .nav-brand {
       display: flex;
       align-items: center;
@@ -69,6 +105,7 @@
       letter-spacing: -0.01em;
       color: #fff;
     }
+
     .badge-pill {
       background: rgba(56, 189, 248, 0.12);
       color: var(--accent-primary);
@@ -81,6 +118,7 @@
       text-transform: uppercase;
       font-family: var(--font-mono);
     }
+
     .nav-links {
       display: flex;
       align-items: center;
@@ -88,8 +126,16 @@
       font-size: 14px;
       font-weight: 500;
     }
-    .nav-links a { color: var(--text-muted); }
-    .nav-links a:hover { color: #fff; text-decoration: none; }
+
+    .nav-links a {
+      color: var(--text-muted);
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+
     .btn-action {
       background: rgba(255, 255, 255, 0.08);
       color: #fff;
@@ -103,6 +149,7 @@
       gap: 6px;
       transition: all 0.2s ease;
     }
+
     .btn-action:hover {
       background: rgba(255, 255, 255, 0.16);
       border-color: rgba(255, 255, 255, 0.3);
@@ -117,6 +164,7 @@
       padding: 60px 24px 36px;
       text-align: center;
     }
+
     .hero-meta {
       display: flex;
       justify-content: center;
@@ -128,6 +176,7 @@
       color: var(--text-muted);
       font-family: var(--font-mono);
     }
+
     .hero h1 {
       font-size: clamp(28px, 4.5vw, 42px);
       font-weight: 800;
@@ -136,6 +185,7 @@
       color: #ffffff;
       margin-bottom: 18px;
     }
+
     .hero-subtitle {
       font-size: clamp(17px, 2.2vw, 20px);
       line-height: 1.5;
@@ -143,6 +193,7 @@
       max-width: 860px;
       margin: 0 auto 28px;
     }
+
     .author-strip {
       display: flex;
       justify-content: center;
@@ -156,7 +207,10 @@
       font-size: 14px;
       color: var(--text-muted);
     }
-    .author-strip b { color: #fff; }
+
+    .author-strip b {
+      color: #fff;
+    }
 
     /* --- Layout Container --- */
     .main-content {
@@ -176,13 +230,17 @@
       position: relative;
       overflow: hidden;
     }
+
     .abstract-card::before {
       content: "";
       position: absolute;
-      top: 0; left: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      bottom: 0;
       width: 4px;
       background: linear-gradient(to bottom, var(--accent-primary), var(--accent-emerald));
     }
+
     .abstract-title {
       font-size: 14px;
       font-family: var(--font-mono);
@@ -195,6 +253,7 @@
       align-items: center;
       gap: 8px;
     }
+
     .abstract-text {
       font-family: var(--font-serif);
       font-size: 17.5px;
@@ -210,6 +269,7 @@
       gap: 16px;
       margin-bottom: 48px;
     }
+
     .stat-card {
       background: var(--bg-card);
       border: 1px solid var(--bg-card-border);
@@ -218,10 +278,12 @@
       text-align: center;
       transition: transform 0.15s ease, border-color 0.15s ease;
     }
+
     .stat-card:hover {
       transform: translateY(-2px);
       border-color: rgba(56, 189, 248, 0.3);
     }
+
     .stat-val {
       font-size: 32px;
       font-weight: 800;
@@ -230,13 +292,21 @@
       font-family: var(--font-sans);
       margin-bottom: 4px;
     }
-    .stat-val.highlight { color: var(--accent-primary); }
-    .stat-val.emerald { color: var(--accent-emerald); }
+
+    .stat-val.highlight {
+      color: var(--accent-primary);
+    }
+
+    .stat-val.emerald {
+      color: var(--accent-emerald);
+    }
+
     .stat-label {
       font-size: 13px;
       color: var(--text-muted);
       font-weight: 500;
     }
+
     .stat-sub {
       font-size: 11.5px;
       color: var(--text-dim);
@@ -252,6 +322,7 @@
       padding: 36px 38px;
       margin-bottom: 32px;
     }
+
     .section-num {
       font-family: var(--font-mono);
       font-size: 13px;
@@ -261,6 +332,7 @@
       margin-bottom: 6px;
       display: block;
     }
+
     h2.section-heading {
       font-size: 24px;
       font-weight: 800;
@@ -270,16 +342,34 @@
       border-bottom: 1px solid var(--bg-card-border);
       padding-bottom: 14px;
     }
+
     h3.sub-heading {
       font-size: 18px;
       font-weight: 700;
       color: #e2e8f0;
       margin: 24px 0 10px;
     }
-    p { margin-bottom: 16px; color: #cbd5e1; font-size: 15.5px; }
-    p:last-child { margin-bottom: 0; }
-    ul, ol { margin: 0 0 18px 24px; color: #cbd5e1; font-size: 15.5px; }
-    li { margin-bottom: 8px; }
+
+    p {
+      margin-bottom: 16px;
+      color: #cbd5e1;
+      font-size: 15.5px;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    ul,
+    ol {
+      margin: 0 0 18px 24px;
+      color: #cbd5e1;
+      font-size: 15.5px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
 
     /* --- Tables --- */
     .table-wrapper {
@@ -289,12 +379,14 @@
       margin: 20px 0;
       background: #0d1322;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
       text-align: left;
     }
+
     th {
       background: #151d30;
       color: #f1f5f9;
@@ -303,15 +395,31 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       font-family: var(--font-sans);
     }
+
     td {
       padding: 12px 16px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       color: #cbd5e1;
     }
-    tr:last-child td { border-bottom: none; }
-    tr.hl td { background: rgba(56, 189, 248, 0.08); font-weight: 600; color: #fff; }
-    .num { font-family: var(--font-mono); text-align: right; }
-    th.num { text-align: right; }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr.hl td {
+      background: rgba(56, 189, 248, 0.08);
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .num {
+      font-family: var(--font-mono);
+      text-align: right;
+    }
+
+    th.num {
+      text-align: right;
+    }
 
     /* --- Visual Comparison Charts --- */
     .chart-container {
@@ -321,25 +429,38 @@
       padding: 24px;
       margin: 24px 0;
     }
+
     .chart-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
     }
+
     .chart-title {
       font-size: 15px;
       font-weight: 700;
       color: #fff;
     }
+
     .chart-legend {
       display: flex;
       gap: 14px;
       font-size: 12.5px;
       color: var(--text-muted);
     }
-    .legend-item { display: flex; align-items: center; gap: 6px; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
 
     /* --- Interactive Queue Widget --- */
     .queue-controls {
@@ -348,6 +469,7 @@
       flex-wrap: wrap;
       margin-bottom: 16px;
     }
+
     .input-search {
       flex: 1 1 240px;
       background: #0a0f1d;
@@ -359,7 +481,11 @@
       outline: none;
       font-family: var(--font-sans);
     }
-    .input-search:focus { border-color: var(--accent-primary); }
+
+    .input-search:focus {
+      border-color: var(--accent-primary);
+    }
+
     .select-filter {
       background: #0a0f1d;
       border: 1px solid var(--bg-card-border);
@@ -370,6 +496,7 @@
       outline: none;
       cursor: pointer;
     }
+
     .action-tag {
       display: inline-block;
       padding: 3px 8px;
@@ -379,9 +506,25 @@
       font-family: var(--font-mono);
       letter-spacing: 0.03em;
     }
-    .tag-refresh { background: rgba(244, 63, 94, 0.15); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.35); }
-    .tag-expand { background: rgba(245, 158, 11, 0.15); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.35); }
-    .tag-monitor { background: rgba(16, 185, 129, 0.15); color: #a7f3d0; border: 1px solid rgba(16, 185, 129, 0.35); }
+
+    .tag-refresh {
+      background: rgba(244, 63, 94, 0.15);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.35);
+    }
+
+    .tag-expand {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fde68a;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .tag-monitor {
+      background: rgba(16, 185, 129, 0.15);
+      color: #a7f3d0;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
     .reason-tag {
       font-family: var(--font-mono);
       font-size: 11.5px;
@@ -399,16 +542,19 @@
       font-size: 14.5px;
       line-height: 1.6;
     }
+
     .callout-info {
       background: rgba(56, 189, 248, 0.08);
       border-left: 4px solid var(--accent-primary);
       color: #e0f2fe;
     }
+
     .callout-warning {
       background: rgba(245, 158, 11, 0.08);
       border-left: 4px solid var(--accent-amber);
       color: #fef3c7;
     }
+
     .callout-danger {
       background: rgba(244, 63, 94, 0.08);
       border-left: 4px solid var(--accent-rose);
@@ -416,9 +562,11 @@
     }
 
     /* --- Code & Pre Blocks --- */
-    pre, code {
+    pre,
+    code {
       font-family: var(--font-mono);
     }
+
     code {
       background: rgba(255, 255, 255, 0.08);
       color: #7dd3fc;
@@ -426,6 +574,7 @@
       border-radius: 4px;
       font-size: 13.5px;
     }
+
     pre {
       background: #080c16;
       border: 1px solid var(--bg-card-border);
@@ -438,6 +587,23 @@
       margin: 16px 0;
     }
 
+    /* --- Math & Equations --- */
+    .equation-box {
+      background: #080c16;
+      border: 1px solid var(--bg-card-border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      text-align: center;
+      overflow-x: auto;
+      color: #f1f5f9;
+    }
+
+    mjx-container {
+      color: inherit;
+      outline: none;
+    }
+
     /* --- Feature Importance Bars --- */
     .feature-row {
       display: grid;
@@ -447,6 +613,7 @@
       margin-bottom: 10px;
       font-size: 13.5px;
     }
+
     .feature-name {
       font-family: var(--font-mono);
       color: #cbd5e1;
@@ -454,12 +621,14 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+
     .bar-bg {
       background: rgba(255, 255, 255, 0.06);
       height: 14px;
       border-radius: 4px;
       overflow: hidden;
     }
+
     .bar-fill {
       height: 100%;
       background: linear-gradient(90deg, #38bdf8, #818cf8);
@@ -476,6 +645,7 @@
       color: var(--text-dim);
       background: #070a12;
     }
+
     .credit-box {
       max-width: 600px;
       margin: 0 auto 20px;
@@ -485,19 +655,32 @@
       border-radius: 12px;
       color: #cbd5e1;
     }
+
     .credit-box a {
       font-weight: 700;
       color: var(--accent-primary);
     }
 
     @media (max-width: 768px) {
-      .hero { padding: 36px 16px 24px; }
-      .paper-section { padding: 24px 20px; }
-      .feature-row { grid-template-columns: 140px 1fr 50px; }
-      .nav-links { display: none; }
+      .hero {
+        padding: 36px 16px 24px;
+      }
+
+      .paper-section {
+        padding: 24px 20px;
+      }
+
+      .feature-row {
+        grid-template-columns: 140px 1fr 50px;
+      }
+
+      .nav-links {
+        display: none;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <!-- Navigation Header -->
@@ -514,8 +697,12 @@
       <a href="#playbook">Playbook</a>
       <a href="#reproducibility">Reproducibility</a>
     </nav>
-    <a href="https://github.com/AMokhtar51/flyrank-ml-internship" target="_blank" rel="noopener noreferrer" class="btn-action">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+    <a href="https://github.com/AMokhtar51/flyrank-ml-internship" target="_blank" rel="noopener noreferrer"
+      class="btn-action">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+      </svg>
       GitHub Repo
     </a>
   </header>
@@ -530,9 +717,11 @@
         <span>•</span>
         <span>AUGUST 2026</span>
       </div>
-      <h1>Prioritizing Content Refresh Under Bandwidth Constraints: An Out-of-Sample Search Opportunity Scoring Framework</h1>
+      <h1>Prioritizing Content Refresh Under Bandwidth Constraints: An Out-of-Sample Search Opportunity Scoring
+        Framework</h1>
       <p class="hero-subtitle">
-        Calibrated machine learning decay scoring across 30,000 production pages to transform editorial triage from arbitrary age heuristics into precision search decision support.
+        Calibrated machine learning decay scoring across 30,000 production pages to transform editorial triage from
+        arbitrary age heuristics into precision search decision support.
       </p>
       <div class="author-strip">
         <div>Author: <b>Abdelrahman Mokhtar</b></div>
@@ -544,11 +733,28 @@
     <!-- 0. Canonical Abstract -->
     <section id="abstract" class="abstract-card">
       <div class="abstract-title">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
         0. Abstract
       </div>
       <p class="abstract-text">
-        Editorial and content marketing teams face severe bandwidth constraints when managing large publication portfolios, making manual page audits across thousands of URLs infeasible. Using the FlyRank March 2026 research snapshot comprising 30,000 anonymized page records across 32 clients, we formulate content decay prediction as an out-of-sample ranking problem. We train supervised classification models (Logistic Regression and Random Forest) alongside a transparent rule-based heuristic baseline, evaluating performance on a strictly partitioned client-holdout split (80% train / 20% test, 7 held-out clients, 6,163 test rows) to eliminate cross-domain data leakage. The learned models achieve a Precision@50 of 72.0% (Logistic Regression) and 56.0% (Random Forest) with Average Precision of 0.604, delivering an observable lift over the heuristic baseline (Precision@50 = 38.0%, Avg Precision = 0.502) against a 51.1% held-out base rate. The resulting prioritized action queue and interpretable reason codes equip editors with decision-support triage to audit decaying high-impact pages, expand thin content, and monitor stable assets.
+        Editorial and content marketing teams face severe bandwidth constraints when managing large publication
+        portfolios, making manual page audits across thousands of URLs infeasible. Using the FlyRank March 2026 research
+        snapshot comprising 30,000 anonymized page records across 32 clients, we formulate content decay prediction as
+        an out-of-sample ranking problem. We train supervised classification models (Logistic Regression, Decision Tree,
+        and Random Forest) alongside a transparent rule-based heuristic baseline, evaluating performance on a strictly
+        partitioned client-holdout split (80% train / 20% test across 6 held-out clients, 2,325 test rows) via
+        <code>make_client_aware_split</code> to eliminate cross-domain data leakage. The Random Forest model achieves a
+        Precision@50 of 82.0% and Average Precision of 0.647 with an ROC-AUC of 0.754, delivering a substantial lift
+        over the heuristic baseline (Precision@50 = 52.0%, Avg Precision = 0.401, ROC-AUC = 0.512) against a 39.1%
+        held-out test base rate. The resulting prioritized action queue and interpretable reason codes equip editors
+        with decision-support triage to audit decaying high-impact pages, expand thin content, and monitor stable
+        assets.
       </p>
     </section>
 
@@ -560,14 +766,14 @@
         <div class="stat-sub">32 enterprise client domains</div>
       </div>
       <div class="stat-card">
-        <div class="stat-val emerald">72.0%</div>
-        <div class="stat-label">Precision@50 (Model)</div>
-        <div class="stat-sub">vs 38.0% Rule Baseline</div>
+        <div class="stat-val emerald">82.0%</div>
+        <div class="stat-label">Precision@50 (Random Forest)</div>
+        <div class="stat-sub">vs 52.0% Rule Baseline</div>
       </div>
       <div class="stat-card">
-        <div class="stat-val">1.89×</div>
+        <div class="stat-val">1.58×</div>
         <div class="stat-label">Precision Lift</div>
-        <div class="stat-sub">Over heuristic baseline</div>
+        <div class="stat-sub">Over heuristic baseline (2.1× base rate)</div>
       </div>
       <div class="stat-card">
         <div class="stat-val">100%</div>
@@ -581,23 +787,35 @@
       <span class="section-num">SECTION 01</span>
       <h2 class="section-heading">Introduction &amp; Problem Statement</h2>
       <p>
-        In modern digital publishing and search engine optimization (SEO), managing content decay is as critical as producing new articles. As search algorithms evolve and competitors publish fresher resources, established articles lose search visibility, click-through rates, and audience engagement. However, digital editorial teams manage thousands of historical articles with finite monthly review bandwidth (often only 20–50 in-depth page rewrites per month).
+        In modern digital publishing and search engine optimization (SEO), managing content decay is as critical as
+        producing new articles. As search algorithms evolve and competitors publish fresher resources, established
+        articles lose search visibility, click-through rates, and audience engagement. However, digital editorial teams
+        manage thousands of historical articles with finite monthly review bandwidth (often only 20–50 in-depth page
+        rewrites per month).
       </p>
       <h3 class="sub-heading">The Core Operational Decision</h3>
       <p>
-        This research provides decision support for a fundamental operational choice: <b>Which high-visibility pages in a multi-client portfolio should editors prioritize for manual audit and revision?</b>
+        This research provides decision support for a fundamental operational choice: <b>Which high-visibility pages in
+          a multi-client portfolio should editors prioritize for manual audit and revision?</b>
       </p>
       <div class="callout callout-info">
-        <b>Unit of Analysis:</b> One published content page (<code>content_id</code>) observed over a 90-day feature window.<br>
-        <b>Action Supported:</b> Triage into <code>REFRESH</code>, <code>EXPAND_AND_REFRESH</code>, or <code>MONITOR</code>.<br>
+        <b>Unit of Analysis:</b> One published content page (<code>content_id</code>) observed over a 90-day feature
+        window.<br>
+        <b>Action Supported:</b> Triage into <code>REFRESH</code>, <code>EXPAND_AND_REFRESH</code>, or
+        <code>MONITOR</code>.<br>
         <b>Cost of Asymmetric Errors:</b>
         <ul style="margin: 8px 0 0 20px;">
-          <li><i>False Positive:</i> An editor wastes 3 hours rewriting a page that was already organically stable, while truly deteriorating articles lose rank.</li>
-          <li><i>False Negative:</i> A decaying, high-demand revenue page goes unnoticed, silently losing thousands of monthly search impressions.</li>
+          <li><i>False Positive:</i> An editor wastes 3 hours rewriting a page that was already organically stable,
+            while truly deteriorating articles lose rank.</li>
+          <li><i>False Negative:</i> A decaying, high-demand revenue page goes unnoticed, silently losing thousands of
+            monthly search impressions.</li>
         </ul>
       </div>
       <p>
-        Simple heuristics such as \"refresh every page older than 180 days\" fail in practice: content age alone correlates weakly with decay. High-performing evergreen content can remain stable for years, while thin or volatile pages can lose rankings within 60 days. Machine learning models capture the complex interaction between historical impression volume, SERP rank slippage, CTR anomalies, and content depth.
+        Simple heuristics such as "refresh every page older than 180 days" fail in practice: content age alone
+        correlates weakly with decay. High-performing evergreen content can remain stable for years, while thin or
+        volatile pages can lose rankings within 60 days. Machine learning models capture the complex interaction between
+        historical impression volume, SERP rank slippage, CTR anomalies, and content depth.
       </p>
     </section>
 
@@ -606,7 +824,9 @@
       <span class="section-num">SECTION 02</span>
       <h2 class="section-heading">Data Source, Scope, &amp; Public Safety</h2>
       <p>
-        This study is conducted on the FlyRank March 2026 research snapshot. The dataset aggregates 90 days of pre-intervention search performance metrics and tracks forward 30-day traffic trajectory across 30,000 distinct article records.
+        This study is conducted on the FlyRank March 2026 research snapshot. The dataset aggregates 90 days of
+        pre-intervention search performance metrics and tracks forward 30-day traffic trajectory across 30,000 distinct
+        article records.
       </p>
 
       <div class="table-wrapper">
@@ -650,12 +870,18 @@
 
       <h3 class="sub-heading">Public-Safety Guardrails &amp; Exclusions</h3>
       <p>
-        To comply with research ethics and data privacy standards, all proprietary identifiers and leaky future-window fields are rigorously scrubbed:
+        To comply with research ethics and data privacy standards, all proprietary identifiers and leaky future-window
+        fields are rigorously scrubbed:
       </p>
       <ul>
-        <li><b>Zero Client or URL Exposure:</b> All URLs, article titles, author names, and domain names are completely excluded. Clients and pages are represented solely by cryptographic hashes (e.g. <code>content_2dba2b1f9536</code>).</li>
-        <li><b>Target Column Exclusions:</b> <code>trend_direction</code> and <code>trend_pct</code> are excluded from the predictive feature matrix because they directly define the target label.</li>
-        <li><b>Zero Future Window Leakage:</b> Metrics measured during the 30-day forward outcome window are strictly barred from training features.</li>
+        <li><b>Zero Client or URL Exposure:</b> All URLs, article titles, author names, and domain names are completely
+          excluded. Clients and pages are represented solely by cryptographic hashes (e.g.
+          <code>content_2dba2b1f9536</code>).
+        </li>
+        <li><b>Target Column Exclusions:</b> <code>trend_direction</code> and <code>trend_pct</code> are excluded from
+          the predictive feature matrix because they directly define the target label.</li>
+        <li><b>Zero Future Window Leakage:</b> Metrics measured during the 30-day forward outcome window are strictly
+          barred from training features.</li>
       </ul>
     </section>
 
@@ -664,32 +890,60 @@
       <span class="section-num">SECTION 03</span>
       <h2 class="section-heading">Methodology &amp; Zero-Leakage Validation</h2>
       <p>
-        We formulate decay prioritization as a binary classification and top-$K$ ranking problem. 
+        We formulate decay prioritization as a binary classification and top-$K$ ranking problem.
       </p>
 
       <h3 class="sub-heading">Target &amp; Feature Space Formulation</h3>
       <p>
-        The target label <code>is_declining_label</code> is defined as $1$ if the page experienced an impression drop in the forward 30-day window ($\text{trend\_pct} < 0$), and $0$ otherwise. The feature vector comprises 26 base signals expanded via one-hot encoding to 52 dimensions:
+        The target label <code>is_declining_label</code> is defined as a binary indicator $y \in \{0, 1\}$ for each page observation:
+      </p>
+      <div class="equation-box">
+        $$y = \begin{cases} 1 & \text{if } \text{trend\_pct} < 0 \quad (\text{forward 30-day impression drop}) \\ 0 & \text{otherwise} \end{cases}$$
+      </div>
+      <p>
+        The predictive feature matrix $\mathbf{X} \in \mathbb{R}^{N \times 52}$ comprises 26 base signals expanded via one-hot encoding:
       </p>
       <ul>
-        <li><b>Search Demand:</b> <code>log_impressions_90d</code>, <code>log_clicks_90d</code>, <code>search_volume</code>, <code>cpc</code>, <code>competition</code></li>
-        <li><b>SERP Trajectory:</b> <code>avg_position</code>, <code>position_tier</code> (Top 3, Page 1, Page 2-3, Deep SERP)</li>
-        <li><b>Content Staleness &amp; Morphology:</b> <code>content_age_days</code>, <code>days_since_last_update</code>, <code>word_count</code>, <code>char_count</code>, <code>content_type</code></li>
-        <li><b>Engagement &amp; Consistency:</b> <code>ctr</code>, <code>engagement_rate</code>, <code>scroll_rate</code>, <code>days_with_impressions</code>, <code>days_with_sessions</code></li>
+        <li><b>Search Demand:</b> <code>log_impressions_90d</code>, <code>log_clicks_90d</code>,
+          <code>search_volume</code>, <code>cpc</code>, <code>competition</code>
+        </li>
+        <li><b>SERP Trajectory:</b> <code>avg_position</code>, <code>position_tier</code> (Top 3, Page 1, Page 2-3,
+          Deep SERP)</li>
+        <li><b>Content Staleness &amp; Morphology:</b> <code>content_age_days</code>,
+          <code>days_since_last_update</code>, <code>word_count</code>, <code>char_count</code>,
+          <code>content_type</code>
+        </li>
+        <li><b>Engagement &amp; Consistency:</b> <code>ctr</code>, <code>engagement_rate</code>,
+          <code>scroll_rate</code>, <code>days_with_impressions</code>, <code>days_with_sessions</code>
+        </li>
       </ul>
 
       <h3 class="sub-heading">The Transparent Heuristic Baseline</h3>
       <p>
-        To ensure our machine learning models earn their place, we build a transparent domain baseline that scores pages based on high visibility ($\ge 500$ impressions), SERP rank slip ($\text{avg\_position} > 20$), and staleness ($\ge 90$ days un-updated):
+        To ensure our machine learning models earn their place, we build a transparent domain baseline that scores
+        pages based on high visibility ($\text{impressions}_{90d} \ge 500$), SERP rank slip ($\text{avg\_position} > 20$), and
+        staleness ($\text{days\_since\_last\_update} \ge 90$):
       </p>
-      <pre><code>Baseline Score = (impressions_90d >= 500) * [ (avg_position > 20) * impressions_90d + 0.3 * (days_since_last_update >= 90) * impressions_90d ]</code></pre>
+      <div class="equation-box">
+        $$\text{Baseline Score} = \mathbb{I}(\text{visible}) \times \left( \mathbb{I}(\text{slip}) \times \text{impressions}_{90d} + 0.3 \times \mathbb{I}(\text{stale}) \times \text{impressions}_{90d} \right)$$
+        <div style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">
+          where $\mathbb{I}(\text{visible}) = \mathbb{I}(\text{impressions}_{90d} \ge 500)$, $\mathbb{I}(\text{slip}) = \mathbb{I}(\text{avg\_position} > 20)$, and $\mathbb{I}(\text{stale}) = \mathbb{I}(\text{days\_since\_last\_update} \ge 90)$.
+        </div>
+      </div>
+      <pre><code># Operational Baseline Implementation
+Baseline Score = (impressions_90d >= 500) * [ (avg_position > 20) * impressions_90d + 0.3 * (days_since_last_update >= 90) * impressions_90d ]</code></pre>
 
       <h3 class="sub-heading">Validation Design: Grouped Client-Holdout Split</h3>
       <div class="callout callout-warning">
-        <b>Why Random Row Splitting Fails:</b> If pages from Client A appear in both training and test sets, models memorize domain authority and CMS quirks, reporting falsely inflated accuracy that collapses when deployed on a new client.
+        <b>Why Random Row Splitting Fails:</b> If pages from Client A appear in both training and test sets, models
+        memorize domain authority and CMS quirks, reporting falsely inflated accuracy that collapses when deployed
+        on a new client.
       </div>
       <p>
-        We apply a strict <b>Grouped Client Split</b> (80% train / 20% test, <code>random_state=42</code>) grouped on <code>client_id</code>. All 6,163 test set pages come from 7 completely unseen clients, providing an honest out-of-sample evaluation.
+        We apply the reference <code>make_client_aware_split</code> function from
+        <code>scripts/03_train_model.py</code> (80% train / 20% test across 6 held-out clients,
+        <code>RANDOM_STATE = 42</code>) grouped strictly on <code>client_id</code>. All 2,325 test set pages come
+        from 6 completely unseen clients, providing an honest out-of-sample evaluation.
       </p>
     </section>
 
@@ -698,7 +952,8 @@
       <span class="section-num">SECTION 04</span>
       <h2 class="section-heading">Experimental Results &amp; Model Comparison</h2>
       <p>
-        Because editorial capacity is strictly capped, <b>Precision@K</b> ($K=20, 50, 100$) is our primary success metric alongside Average Precision (PR-AUC) and ROC-AUC.
+        Because editorial capacity is strictly capped, <b>Precision@$K$</b> ($K \in \{20, 50, 100\}$) is our primary success
+        metric alongside Average Precision (PR-AUC) and ROC-AUC.
       </p>
 
       <div class="table-wrapper">
@@ -719,36 +974,47 @@
           <tbody>
             <tr>
               <td><b>Rule Baseline</b></td>
-              <td class="num">30.0%</td>
-              <td class="num">38.0%</td>
-              <td class="num">36.0%</td>
-              <td class="num">0.502</td>
-              <td class="num">0.492</td>
+              <td class="num">55.0%</td>
+              <td class="num">52.0%</td>
+              <td class="num">52.0%</td>
+              <td class="num">0.401</td>
+              <td class="num">0.512</td>
               <td class="num">—</td>
               <td class="num">—</td>
-              <td class="num">51.1%</td>
-            </tr>
-            <tr class="hl">
-              <td><b>Logistic Regression</b></td>
-              <td class="num"><b>70.0%</b></td>
-              <td class="num"><b>72.0%</b></td>
-              <td class="num"><b>71.0%</b></td>
-              <td class="num"><b>0.604</b></td>
-              <td class="num"><b>0.616</b></td>
-              <td class="num">72.1%</td>
-              <td class="num">0.641</td>
-              <td class="num">51.1%</td>
+              <td class="num">39.1%</td>
             </tr>
             <tr>
+              <td><b>Decision Tree</b></td>
+              <td class="num">40.0%</td>
+              <td class="num">42.0%</td>
+              <td class="num">50.0%</td>
+              <td class="num">0.562</td>
+              <td class="num">0.736</td>
+              <td class="num">74.3%</td>
+              <td class="num">0.644</td>
+              <td class="num">39.1%</td>
+            </tr>
+            <tr>
+              <td><b>Logistic Regression</b></td>
+              <td class="num">35.0%</td>
+              <td class="num">36.0%</td>
+              <td class="num">42.0%</td>
+              <td class="num">0.520</td>
+              <td class="num">0.700</td>
+              <td class="num">65.6%</td>
+              <td class="num">0.605</td>
+              <td class="num">39.1%</td>
+            </tr>
+            <tr class="hl">
               <td><b>Random Forest</b></td>
-              <td class="num">60.0%</td>
-              <td class="num">56.0%</td>
-              <td class="num">62.0%</td>
-              <td class="num">0.596</td>
-              <td class="num">0.606</td>
-              <td class="num">67.6%</td>
-              <td class="num">0.621</td>
-              <td class="num">51.1%</td>
+              <td class="num"><b>80.0%</b></td>
+              <td class="num"><b>82.0%</b></td>
+              <td class="num"><b>84.0%</b></td>
+              <td class="num"><b>0.647</b></td>
+              <td class="num"><b>0.754</b></td>
+              <td class="num">80.4%</td>
+              <td class="num">0.637</td>
+              <td class="num">39.1%</td>
             </tr>
           </tbody>
         </table>
@@ -759,73 +1025,100 @@
         <div class="chart-header">
           <div class="chart-title">Precision@50 on Unseen Clients (Client-Holdout Split)</div>
           <div class="chart-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:#94a3b8"></div> Baseline (38.0%)</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#38bdf8"></div> Logistic Reg (72.0%)</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div> Random Forest (56.0%)</div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#94a3b8"></div> Baseline (52.0%)
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#38bdf8"></div> Logistic Reg (36.0%)
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#fbbf24"></div> Decision Tree (42.0%)
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#10b981"></div> Random Forest (82.0%)
+            </div>
           </div>
         </div>
-        <svg viewBox="0 0 760 180" style="width:100%; height:auto;">
+        <svg viewBox="0 0 760 210" style="width:100%; height:auto;">
           <!-- Grid lines -->
-          <line x1="160" y1="20" x2="160" y2="150" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-          <line x1="310" y1="20" x2="310" y2="150" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-          <line x1="460" y1="20" x2="460" y2="150" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-          <line x1="610" y1="20" x2="610" y2="150" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <line x1="160" y1="20" x2="160" y2="180" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+          <line x1="310" y1="20" x2="310" y2="180" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+          <line x1="460" y1="20" x2="460" y2="180" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+          <line x1="610" y1="20" x2="610" y2="180" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
           <!-- Base rate reference line -->
-          <line x1="466.5" y1="15" x2="466.5" y2="155" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="4"/>
-          <text x="472" y="30" fill="#f43f5e" font-size="11" font-family="Space Mono">Base Rate (51.1%)</text>
-          
+          <line x1="394.5" y1="15" x2="394.5" y2="185" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="4" />
+          <text x="400" y="28" fill="#f43f5e" font-size="11" font-family="Space Mono">Base Rate (39.1%)</text>
+
           <!-- Bars -->
-          <text x="145" y="52" fill="#cbd5e1" font-size="13" font-weight="600" text-anchor="end">Rule Baseline</text>
-          <rect x="160" y="38" width="228" height="22" fill="#94a3b8" rx="4"/>
-          <text x="396" y="54" fill="#fff" font-size="12" font-family="Space Mono" font-weight="bold">38.0%</text>
+          <text x="145" y="48" fill="#cbd5e1" font-size="13" font-weight="600" text-anchor="end">Rule Baseline</text>
+          <rect x="160" y="34" width="312" height="20" fill="#94a3b8" rx="4" />
+          <text x="480" y="49" fill="#fff" font-size="12" font-family="Space Mono" font-weight="bold">52.0%</text>
 
-          <text x="145" y="92" fill="#cbd5e1" font-size="13" font-weight="600" text-anchor="end">Logistic Regression</text>
-          <rect x="160" y="78" width="432" height="22" fill="#38bdf8" rx="4"/>
-          <text x="600" y="94" fill="#fff" font-size="12" font-family="Space Mono" font-weight="bold">72.0% (1.89× lift)</text>
+          <text x="145" y="84" fill="#cbd5e1" font-size="13" font-weight="600" text-anchor="end">Logistic
+            Regression</text>
+          <rect x="160" y="70" width="216" height="20" fill="#38bdf8" rx="4" />
+          <text x="384" y="85" fill="#fff" font-size="12" font-family="Space Mono" font-weight="bold">36.0%</text>
 
-          <text x="145" y="132" fill="#cbd5e1" font-size="13" font-weight="600" text-anchor="end">Random Forest</text>
-          <rect x="160" y="118" width="336" height="22" fill="#10b981" rx="4"/>
-          <text x="504" y="134" fill="#fff" font-size="12" font-family="Space Mono" font-weight="bold">56.0% (1.47× lift)</text>
+          <text x="145" y="120" fill="#cbd5e1" font-size="13" font-weight="600" text-anchor="end">Decision Tree</text>
+          <rect x="160" y="106" width="252" height="20" fill="#fbbf24" rx="4" />
+          <text x="420" y="121" fill="#fff" font-size="12" font-family="Space Mono" font-weight="bold">42.0%</text>
+
+          <text x="145" y="156" fill="#cbd5e1" font-size="13" font-weight="600" text-anchor="end">Random Forest</text>
+          <rect x="160" y="142" width="492" height="20" fill="#10b981" rx="4" />
+          <text x="660" y="157" fill="#fff" font-size="12" font-family="Space Mono" font-weight="bold">82.0% (1.58×
+            lift)</text>
         </svg>
       </div>
 
       <h3 class="sub-heading">Feature Importance &amp; Risk Drivers</h3>
       <p>
-        Inspection of Random Forest feature importances and Logistic Regression weights confirms the strongest predictive drivers of content decay:
+        Inspection of Random Forest feature importances confirms the strongest predictive drivers of content decay:
       </p>
 
       <div style="margin-top: 18px;">
         <div class="feature-row">
-          <div class="feature-name">days_with_impressions</div>
-          <div class="bar-bg"><div class="bar-fill" style="width: 100%;"></div></div>
-          <div class="num" style="color:var(--accent-primary); font-weight:bold;">11.6%</div>
-        </div>
-        <div class="feature-row">
           <div class="feature-name">log_impressions_90d</div>
-          <div class="bar-bg"><div class="bar-fill" style="width: 95.7%;"></div></div>
-          <div class="num" style="color:var(--accent-primary); font-weight:bold;">11.1%</div>
+          <div class="bar-bg">
+            <div class="bar-fill" style="width: 100%;"></div>
+          </div>
+          <div class="num" style="color:var(--accent-primary); font-weight:bold;">11.4%</div>
         </div>
         <div class="feature-row">
           <div class="feature-name">avg_position</div>
-          <div class="bar-bg"><div class="bar-fill" style="width: 90.1%;"></div></div>
-          <div class="num" style="color:var(--accent-primary); font-weight:bold;">10.4%</div>
+          <div class="bar-bg">
+            <div class="bar-fill" style="width: 97.2%;"></div>
+          </div>
+          <div class="num" style="color:var(--accent-primary); font-weight:bold;">11.0%</div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-name">days_with_impressions</div>
+          <div class="bar-bg">
+            <div class="bar-fill" style="width: 95.2%;"></div>
+          </div>
+          <div class="num" style="color:var(--accent-primary); font-weight:bold;">10.8%</div>
         </div>
         <div class="feature-row">
           <div class="feature-name">content_age_days</div>
-          <div class="bar-bg"><div class="bar-fill" style="width: 71.1%;"></div></div>
-          <div class="num" style="color:var(--accent-primary); font-weight:bold;">8.2%</div>
+          <div class="bar-bg">
+            <div class="bar-fill" style="width: 69.7%;"></div>
+          </div>
+          <div class="num" style="color:var(--accent-primary); font-weight:bold;">7.9%</div>
         </div>
         <div class="feature-row">
           <div class="feature-name">word_count</div>
-          <div class="bar-bg"><div class="bar-fill" style="width: 45.0%;"></div></div>
-          <div class="num" style="color:var(--accent-primary); font-weight:bold;">5.2%</div>
+          <div class="bar-bg">
+            <div class="bar-fill" style="width: 40.8%;"></div>
+          </div>
+          <div class="num" style="color:var(--accent-primary); font-weight:bold;">4.6%</div>
         </div>
       </div>
 
       <h3 class="sub-heading">Error Analysis</h3>
       <ul>
-        <li><b>False Positives (Predicted Decay, Actually Stable):</b> High-impression articles hovering at deep SERP positions ($>30$) with low CTR that nonetheless maintained stable niche traffic.</li>
-        <li><b>False Negatives (Predicted Safe, Actually Decayed):</b> Recently updated pages ($<30$ days) that suffered sudden external algorithm or competitor displacement unpredicted by historical metrics.</li>
+        <li><b>False Positives (Predicted Decay, Actually Stable):</b> High-impression articles hovering at deep SERP
+          positions ($\text{avg\_position} > 30$) with low CTR that nonetheless maintained stable niche traffic.</li>
+        <li><b>False Negatives (Predicted Safe, Actually Decayed):</b> Recently updated pages ($\text{days\_since\_last\_update} < 30$) that suffered
+            sudden external algorithm or competitor displacement unpredicted by historical metrics.</li>
       </ul>
     </section>
 
@@ -834,14 +1127,23 @@
       <span class="section-num">SECTION 05</span>
       <h2 class="section-heading">Limitations &amp; Honest Framing</h2>
       <p>
-        To maintain research credibility, we explicitly document boundary conditions where model assumptions stop holding:
+        To maintain research credibility, we explicitly document boundary conditions where model assumptions stop
+        holding:
       </p>
       <ul>
-        <li><b>Decision-Support, Not Causal:</b> The model estimates historical statistical associations. It does <i>not</i> guarantee that refreshing an article will cause rankings or impressions to recover. Causal claims would require randomized A/B content refresh experiments.</li>
-        <li><b>Rate Scaling Conventions:</b> Rates such as <code>ctr</code>, <code>engagement_rate</code>, and <code>scroll_rate</code> are recorded on a percentage scale ($0.76 = 0.76\%$).</li>
-        <li><b>Missing SERP Data:</b> 4.0% of pages in the portfolio record <code>avg_position = 0</code>, reflecting unranked or missing search query tracking rather than rank zero.</li>
-        <li><b>Low Search Volume Boundaries:</b> Pages with $<500$ 90-day impressions have sparse search signals, leading to wider predictive uncertainty.</li>
-        <li><b>No Claim of \"Reverse-Engineering Google\":</b> The model learns patterns in client portfolio traffic outcomes; it does not model search engine rank weighting formulas.</li>
+        <li><b>Decision-Support, Not Causal:</b> The model estimates historical statistical associations. It does
+          <i>not</i> guarantee that refreshing an article will cause rankings or impressions to recover. Causal claims
+          would require randomized A/B content refresh experiments.
+        </li>
+        <li><b>Rate Scaling Conventions:</b> Rates such as <code>ctr</code>, <code>engagement_rate</code>, and
+          <code>scroll_rate</code> are recorded on a percentage scale ($0.76 = 0.76\%$).
+        </li>
+        <li><b>Missing SERP Data:</b> 4.0% of pages in the portfolio record <code>avg_position = 0</code>, reflecting
+          unranked or missing search query tracking rather than rank zero.</li>
+        <li><b>Low Search Volume Boundaries:</b> Pages with $< 500$ 90-day impressions ($\text{impressions}_{90d} < 500$) have sparse search signals,
+            leading to wider predictive uncertainty.</li>
+        <li><b>No Claim of &ldquo;Reverse-Engineering Google&rdquo;:</b> The model learns patterns in client portfolio traffic
+          outcomes; it does not model search engine rank weighting formulas.</li>
       </ul>
     </section>
 
@@ -850,7 +1152,8 @@
       <span class="section-num">SECTION 06</span>
       <h2 class="section-heading">Ranked Recommendations &amp; Action Playbook</h2>
       <p>
-        Model probabilities are synthesized into an operational triage queue. Out of 30,000 scored articles across the portfolio, items are categorized into actionable workflows:
+        Model probabilities are synthesized into an operational triage queue. Out of 30,000 scored articles across the
+        portfolio, items are categorized into actionable workflows:
       </p>
 
       <div class="stats-grid" style="margin-bottom: 24px;">
@@ -862,7 +1165,7 @@
         <div class="stat-card">
           <div class="stat-val" style="color:#f59e0b;">14</div>
           <div class="stat-label">EXPAND &amp; REFRESH</div>
-          <div class="stat-sub">Thin content (<1200 words)</div>
+          <div class="stat-sub">Thin content (&lt; 1,200 words)</div>
         </div>
         <div class="stat-card">
           <div class="stat-val" style="color:#10b981;">20,933</div>
@@ -873,10 +1176,12 @@
 
       <!-- Interactive Queue Explorer Widget -->
       <h3 class="sub-heading">Live Priority Queue Explorer</h3>
-      <p style="font-size:14px; color:var(--text-muted);">Explore sample recommendations from the top 100 prioritized articles. Filter by action or search by content hash.</p>
-      
+      <p style="font-size:14px; color:var(--text-muted);">Explore sample recommendations from the top 100 prioritized
+        articles. Filter by action or search by content hash.</p>
+
       <div class="queue-controls">
-        <input type="text" id="queueSearch" class="input-search" placeholder="Search content hash (e.g. content_2dba...)" oninput="filterQueue()">
+        <input type="text" id="queueSearch" class="input-search"
+          placeholder="Search content hash (e.g. content_2dba...)" oninput="filterQueue()">
         <select id="actionFilter" class="select-filter" onchange="filterQueue()">
           <option value="ALL">All Actions</option>
           <option value="REFRESH">REFRESH</option>
@@ -909,17 +1214,21 @@
       <div class="callout callout-danger">
         <b>The No-Go List (Never Programmatically Refresh):</b>
         <ul style="margin: 6px 0 0 20px;">
-          <li><b>Legal &amp; Policy Pages:</b> Terms of Service, Privacy Policies, and Medical/Financial Disclaimers.</li>
+          <li><b>Legal &amp; Policy Pages:</b> Terms of Service, Privacy Policies, and Medical/Financial Disclaimers.
+          </li>
           <li><b>Brand Core Pages:</b> Homepages, brand navigational portals, and corporate contact assets.</li>
-          <li><b>30-Day Cooldown:</b> Pages updated within the last 30 days must be held in cooldown to allow search engines to re-index.</li>
+          <li><b>30-Day Cooldown:</b> Pages updated within the last 30 days must be held in cooldown to allow search
+            engines to re-index.</li>
         </ul>
       </div>
 
       <h3 class="sub-heading">Retraining &amp; Monitoring Triggers</h3>
       <ul>
-        <li><b>Portfolio CTR Drift:</b> Median portfolio CTR shifts by $>20\%$ (indicating SERP layout overhaul or new AI Overview placements).</li>
-        <li><b>Precision Degradation:</b> Holdout Precision@50 on new client batches drops below $0.55$.</li>
-        <li><b>Quarterly Cadence:</b> Retrain models every 90 days or immediately following confirmed major search engine core updates.</li>
+        <li><b>Portfolio CTR Drift:</b> Median portfolio CTR shifts by $> 20\%$ (indicating SERP layout overhaul or new
+          AI Overview placements).</li>
+        <li><b>Precision Degradation:</b> Holdout Precision@50 on new client batches drops below $0.55$ ($\text{Precision@50} < 0.55$).</li>
+        <li><b>Quarterly Cadence:</b> Retrain models every 90 days or immediately following confirmed major search
+          engine core updates.</li>
       </ul>
     </section>
 
@@ -928,7 +1237,8 @@
       <span class="section-num">SECTION 07</span>
       <h2 class="section-heading">Reproducibility &amp; Receipts</h2>
       <p>
-        Every figure, metric table, and queue item in this paper is fully deterministic and backed by committed code receipts in the public GitHub repository.
+        Every figure, metric table, and queue item in this paper is fully deterministic and backed by committed code
+        receipts in the public GitHub repository.
       </p>
       <pre><code># 1. Clone the repository
 git clone https://github.com/AMokhtar51/flyrank-ml-internship.git
@@ -939,21 +1249,26 @@ python scripts/run_all.py
 
 # 3. Execute and verify the capstone notebook top-to-bottom
 jupyter nbconvert --to notebook --execute --inplace work/notebooks/capstone.ipynb</code></pre>
-      
+
       <p style="font-size:14.5px;">
-        <b>Technical Specifications:</b> Python 3.14 / 3.13 · <code>scikit-learn==1.8.0</code> · <code>pandas==3.0.2</code> · <code>numpy==2.2.0</code> · Random State: <code>42</code> across all data splits and estimators.
+        <b>Technical Specifications:</b> Python 3.14 / 3.13 · <code>scikit-learn==1.8.0</code> ·
+        <code>pandas==3.0.2</code> · <code>numpy==2.2.0</code> · Random State: <code>42</code> across all data splits
+        and estimators.
       </p>
     </section>
 
     <!-- 8. Acknowledgments & Data Credit -->
-    <section class="paper-section" style="border-color: rgba(56, 189, 248, 0.3); background: linear-gradient(180deg, #111726, #0c1220);">
+    <section class="paper-section"
+      style="border-color: rgba(56, 189, 248, 0.3); background: linear-gradient(180deg, #111726, #0c1220);">
       <span class="section-num">SECTION 08</span>
       <h2 class="section-heading">Acknowledgments &amp; Data Credit</h2>
       <p style="font-size: 16px; color: #f1f5f9;">
-        Built on the FlyRank ML Internship dataset, provided by <a href="https://flyrank.ai" target="_blank" rel="noopener noreferrer" style="font-weight: 700; text-decoration: underline;">https://flyrank.ai</a>.
+        Built on the FlyRank ML Internship dataset, provided by <a href="https://flyrank.ai" target="_blank"
+          rel="noopener noreferrer" style="font-weight: 700; text-decoration: underline;">https://flyrank.ai</a>.
       </p>
       <p style="font-size: 14px; color: var(--text-muted);">
-        We thank FlyRank for providing access to anonymized production search performance records and supporting rigorous, leak-free machine learning research.
+        We thank FlyRank for providing access to anonymized production search performance records and supporting
+        rigorous, leak-free machine learning research.
       </p>
     </section>
 
@@ -964,7 +1279,8 @@ jupyter nbconvert --to notebook --execute --inplace work/notebooks/capstone.ipyn
     <div class="credit-box">
       <div><b>FlyRank ML Internship Capstone Research Paper</b></div>
       <div style="font-size: 13px; margin-top: 4px;">Author: Abdelrahman Mokhtar · August 2026</div>
-      <div style="font-size: 13px; margin-top: 4px;">Data Credit: <a href="https://flyrank.ai" target="_blank" rel="noopener noreferrer">FlyRank (https://flyrank.ai)</a></div>
+      <div style="font-size: 13px; margin-top: 4px;">Data Credit: <a href="https://flyrank.ai" target="_blank"
+          rel="noopener noreferrer">FlyRank (https://flyrank.ai)</a></div>
     </div>
     <p>© 2026 Abdelrahman Mokhtar. All rights reserved. Decision-support search intelligence research.</p>
   </footer>
@@ -1005,7 +1321,7 @@ jupyter nbconvert --to notebook --execute --inplace work/notebooks/capstone.ipyn
           <tr>
             <td class="num">${item.rank}</td>
             <td><code style="color:#7dd3fc">${item.id}</code></td>
-            <td class="num font-mono"><b>${item.score.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})}</b></td>
+            <td class="num font-mono"><b>${item.score.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</b></td>
             <td><span class="action-tag ${tagClass}">${item.action}</span></td>
             <td><span class="reason-tag">${item.reason}</span></td>
             <td class="num font-mono">${item.imp.toLocaleString()}</td>
@@ -1035,4 +1351,5 @@ jupyter nbconvert --to notebook --execute --inplace work/notebooks/capstone.ipyn
     });
   </script>
 </body>
+
 </html>

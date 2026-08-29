@@ -9,7 +9,7 @@
 
 ## 0. Abstract
 
-Editorial and content marketing teams face severe bandwidth constraints when managing large publication portfolios, making manual page audits across thousands of URLs infeasible. Using the FlyRank March 2026 research snapshot comprising 30,000 anonymized page records across 32 clients, we formulate content decay prediction as an out-of-sample ranking problem. We train supervised classification models (Logistic Regression and Random Forest) alongside a transparent rule-based heuristic baseline, evaluating performance on a strictly partitioned client-holdout split (80% train / 20% test, 7 held-out clients, 6,163 test rows) to eliminate cross-domain data leakage. The learned models achieve a Precision@50 of 72.0% (Logistic Regression) and 56.0% (Random Forest) with Average Precision of 0.604, delivering an observable lift over the heuristic baseline (Precision@50 = 38.0%, Avg Precision = 0.502) against a 51.1% held-out base rate. The resulting prioritized action queue and interpretable reason codes equip editors with decision-support triage to audit decaying high-impact pages, expand thin content, and monitor stable assets.
+Editorial and content marketing teams face severe bandwidth constraints when managing large publication portfolios, making manual page audits across thousands of URLs infeasible. Using the FlyRank March 2026 research snapshot comprising 30,000 anonymized page records across 32 clients, we formulate content decay prediction as an out-of-sample ranking problem. We train supervised classification models (Logistic Regression, Decision Tree, and Random Forest) alongside a transparent rule-based heuristic baseline, evaluating performance on a strictly partitioned client-holdout split (80% train / 20% test across 6 held-out clients, 2,325 test rows) via `make_client_aware_split` to eliminate cross-domain data leakage. The Random Forest model achieves a Precision@50 of 82.0% and Average Precision of 0.647 with an ROC-AUC of 0.754, delivering a substantial lift over the heuristic baseline (Precision@50 = 52.0%, Avg Precision = 0.401, ROC-AUC = 0.512) against a 39.1% held-out test base rate. The resulting prioritized action queue and interpretable reason codes equip editors with decision-support triage to audit decaying high-impact pages, expand thin content, and monitor stable assets.
 
 ---
 
@@ -45,12 +45,12 @@ We establish a transparent, domain-driven heuristic rule to benchmark learned mo
 
 $$\text{Baseline Score} = \mathbb{I}(\text{visible}) \times \left( \mathbb{I}(\text{slip}) \times \text{impressions}_{90d} + 0.3 \times \mathbb{I}(\text{stale}) \times \text{impressions}_{90d} \right)$$
 
-On the held-out client test split (6,163 rows across 7 unseen clients, base rate = 51.1%), the baseline achieves:
-- **Precision@20:** 0.300 (30.0%)
-- **Precision@50:** 0.380 (38.0%)
-- **Precision@100:** 0.360 (36.0%)
-- **Average Precision (PR-AUC):** 0.502
-- **ROC-AUC:** 0.492
+On the held-out client test split (2,325 rows across 6 unseen clients, base rate = 39.1%), the baseline achieves:
+- **Precision@20:** 0.550 (55.0%)
+- **Precision@50:** 0.520 (52.0%)
+- **Precision@100:** 0.520 (52.0%)
+- **Average Precision (PR-AUC):** 0.401
+- **ROC-AUC:** 0.512
 
 The baseline demonstrates that simple volume-weighted position filtering underperforms random chance on top-ranked items because high impression volume does not inherently correlate with severe decay risk.
 
@@ -73,20 +73,21 @@ We evaluated supervised classification architectures suited for tabular search d
 ## 5. Evaluation
 
 ### Split Strategy: Grouped Client-Holdout Split
-To guarantee that models generalize across distinct domains and CMS architectures rather than memorizing domain-specific idiosyncrasies, we partition the dataset using `GroupShuffleSplit` (80% train / 20% test, `random_state=42`) grouped by `client_id`.
-- **Training Set:** 23,837 pages across 25 clients.
-- **Held-Out Test Set:** 6,163 pages across 7 completely unseen clients (Base Rate = 0.511).
+To guarantee that models generalize across distinct domains and CMS architectures rather than memorizing domain-specific idiosyncrasies, we partition the dataset using the reference `make_client_aware_split` function from `scripts/03_train_model.py` (80% train / 20% test, `RANDOM_STATE = 42`) grouped by `client_id`.
+- **Training Set:** 27,675 pages across 26 clients.
+- **Held-Out Test Set:** 2,325 pages across 6 completely unseen clients (Base Rate = 0.391).
 
 ### Comparative Metric Receipts (Held-Out Test Split)
 
 | Method | Precision@20 | Precision@50 | Precision@100 | Avg Precision (PR-AUC) | ROC-AUC | Precision | Recall | F1 | Accuracy | Base Rate |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **Rule Baseline** | 0.300 | 0.380 | 0.360 | 0.502 | 0.492 | — | — | — | — | 0.511 |
-| **Logistic Regression** | **0.700** | **0.720** | **0.710** | **0.604** | **0.616** | 0.576 | 0.721 | 0.641 | 0.587 | 0.511 |
-| **Random Forest** | **0.600** | **0.560** | **0.620** | **0.596** | **0.606** | 0.574 | 0.676 | 0.621 | 0.578 | 0.511 |
+| **Rule Baseline** | 0.550 | 0.520 | 0.520 | 0.401 | 0.512 | — | — | — | — | 0.391 |
+| **Decision Tree** | 0.400 | 0.420 | 0.500 | 0.562 | 0.736 | 0.568 | 0.743 | 0.644 | 0.679 | 0.391 |
+| **Logistic Regression** | 0.350 | 0.360 | 0.420 | 0.520 | 0.700 | 0.562 | 0.656 | 0.605 | 0.666 | 0.391 |
+| **Random Forest** | **0.800** | **0.820** | **0.840** | **0.647** | **0.754** | 0.527 | 0.804 | 0.637 | 0.641 | 0.391 |
 
 ### Error Analysis & Observations:
-- **Top Queue Precision Lift:** Both machine learning models significantly outperform the heuristic baseline, with Logistic Regression achieving a **1.89× lift** in Precision@50 (72.0% vs 38.0%) and Random Forest achieving a **1.47× lift** (56.0% vs 38.0%).
+- **Top Queue Precision Lift:** Random Forest achieves **82.0% Precision@50** (and 84.0% at Precision@100), delivering a **1.58× lift** over the heuristic baseline (52.0%) and more than doubling the test base rate (39.1%).
 - **False Positives:** Highly visible pages ranked on deep SERP positions ($>30$) that maintain steady niche traffic despite low CTR.
 - **False Negatives:** Recently updated pages ($<30$ days) that suffered unexpected SERP displacement due to external competitor movements or core algorithm shifts.
 
@@ -96,11 +97,11 @@ To guarantee that models generalize across distinct domains and CMS architecture
 
 ### Feature Importance & Risk Factors
 Feature importance analysis in Random Forest and coefficient inspection in Logistic Regression reveal the primary signals driving content decay:
-1. **Activity Consistency (`days_with_impressions` — 11.6%):** Pages with sporadic daily search impressions have higher decline probabilities than steady daily performers.
-2. **Search Visibility (`log_impressions_90d` — 11.1%):** High visibility provides strong statistical power to detect meaningful trend shifts.
-3. **Average Position (`avg_position` — 10.4%):** Pages hovering on Page 2 or Page 3 (positions 11–30) are vulnerable to ranking drops that cause steep traffic loss.
-4. **Content Staleness (`content_age_days` — 8.2%):** Older content that has not been refreshed experiences natural information decay.
-5. **Content Depth (`word_count` — 5.2% & `char_count` — 4.8%):** Thin content exhibits higher vulnerability to SERP volatility.
+1. **Search Visibility (`log_impressions_90d` — 11.4%):** High visibility provides strong statistical power to detect meaningful trend shifts.
+2. **Average Position (`avg_position` — 11.0%):** Pages hovering on Page 2 or Page 3 (positions 11–30) are vulnerable to ranking drops that cause steep traffic loss.
+3. **Activity Consistency (`days_with_impressions` — 10.8%):** Pages with sporadic daily search impressions have higher decline probabilities than steady daily performers.
+4. **Content Staleness (`content_age_days` — 7.9%):** Older content that has not been refreshed experiences natural information decay.
+5. **Content Depth (`word_count` — 4.6% & `char_count` — 4.2%):** Thin content exhibits higher vulnerability to SERP volatility.
 
 ---
 

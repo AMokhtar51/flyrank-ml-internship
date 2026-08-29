@@ -1,0 +1,88 @@
+{
+  "rows_scored": 30000,
+  "clients_count": 32,
+  "base_rate": 0.5420666666666667,
+  "test_rows": 6163,
+  "test_clients": 7,
+  "test_base_rate": 0.5109524582184002,
+  "metrics": {
+    "baseline": {
+      "precision_at_20": 0.3,
+      "precision_at_50": 0.38,
+      "precision_at_100": 0.36,
+      "average_precision": 0.5020332074484952,
+      "roc_auc": 0.4921314062479256
+    },
+    "logistic_regression": {
+      "precision_at_20": 0.7,
+      "precision_at_50": 0.72,
+      "precision_at_100": 0.71,
+      "average_precision": 0.6039463604486027,
+      "roc_auc": 0.6155023777047222,
+      "precision": 0.5763571790969051,
+      "recall": 0.7214988885360432,
+      "f1": 0.6408122972782401,
+      "accuracy": 0.5867272432257018
+    },
+    "random_forest": {
+      "precision_at_20": 0.6,
+      "precision_at_50": 0.56,
+      "precision_at_100": 0.62,
+      "average_precision": 0.5955180053249727,
+      "roc_auc": 0.60609144201201,
+      "precision": 0.5737395524400107,
+      "recall": 0.6757700857415052,
+      "f1": 0.620589093030038,
+      "accuracy": 0.5778030180107091
+    }
+  },
+  "top_features": [
+    {
+      "feature": "days_with_impressions",
+      "importance": 0.11566960202407482
+    },
+    {
+      "feature": "log_impressions_90d",
+      "importance": 0.11101458691920538
+    },
+    {
+      "feature": "avg_position",
+      "importance": 0.10446838370331206
+    },
+    {
+      "feature": "content_age_days",
+      "importance": 0.0824416558863892
+    },
+    {
+      "feature": "word_count",
+      "importance": 0.05223869140026472
+    },
+    {
+      "feature": "char_count",
+      "importance": 0.047503124993877294
+    },
+    {
+      "feature": "ctr",
+      "importance": 0.04112578236467842
+    },
+    {
+      "feature": "scroll_rate",
+      "importance": 0.03849312010220832
+    },
+    {
+      "feature": "days_with_sessions",
+      "importance": 0.035776842533775305
+    },
+    {
+      "feature": "log_sessions_90d",
+      "importance": 0.03434809089815165
+    }
+  ],
+  "queue_summary": {
+    "total_queue_rows": 30000,
+    "refresh_count": 9053,
+    "expand_refresh_count": 14,
+    "monitor_count": 20933,
+    "top_50_decline_rate": 0.56
+  }
+}
